@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+.glassmorphism-container {
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px); 
+    border-radius: 15px; 
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 20px; 
+    width: 400px; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .glassmorphism-container-dashboard {
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px); 
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 330px; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .glassmorphism-container-dashboard-form {
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px); 
+    border-radius: 15px; 
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 20px; 
+    width: 1030px; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
