@@ -3,11 +3,16 @@ import { createContext, useContext, useState, useEffect } from "react";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(() => !!localStorage.getItem("token"));
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsAdmin(!!token);
+    const onStorage = (event) => {
+      if (event.key === "token") {
+        setIsAdmin(!!event.newValue);
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
 
@@ -19,6 +24,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userId");
     setIsAdmin(false);
   };
 

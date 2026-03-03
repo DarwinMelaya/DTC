@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import logo from "../assets/Logo.png";
 
 const linkBase =
   "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors";
@@ -20,10 +22,10 @@ const Sidebar = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isPstoOpen, setIsPstoOpen] = useState(false);
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userId");
+    logout();
     navigate("/");
   };
 
@@ -34,14 +36,17 @@ const Sidebar = () => {
 
   return (
     <aside className="flex h-full flex-col gap-6 rounded-2xl border border-slate-800 bg-slate-900/60 p-4 backdrop-blur">
-      <div className="rounded-xl border border-white/10 bg-gradient-to-r from-sky-500 via-blue-600 to-blue-700 p-4 text-white shadow">
-        <p className="text-xs font-medium uppercase tracking-[0.35em] text-blue-100/90">
-          Admin Panel
-        </p>
-        <h2 className="mt-1 text-xl font-semibold">Control Center</h2>
-        <p className="mt-1 text-xs text-blue-100/90">
-          Monitor, manage, and move documents with ease.
-        </p>
+      <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-gradient-to-r from-sky-500 via-blue-600 to-blue-700 p-4 text-white shadow">
+        <img
+          src={logo}
+          alt="DOST Logo"
+          width={44}
+          height={44}
+          className="h-11 w-11 rounded-full bg-white/90 p-1"
+        />
+        <div className="leading-tight">
+          <div className="mt-0.5 text-base font-semibold">DOST-Marinduque</div>
+        </div>
       </div>
 
       <nav className="flex-1 space-y-1">

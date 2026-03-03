@@ -13,12 +13,14 @@ const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
 
     try {
       const response = await axios.post(`${API_BASE_URL}/api/admin/login`, {
@@ -37,6 +39,8 @@ const AdminLogin = () => {
         err.message ||
         "Invalid email or password";
       setError(message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -50,34 +54,33 @@ const AdminLogin = () => {
       <div className="relative z-10 flex flex-col lg:flex-row min-h-screen p-6 lg:p-12 gap-12">
         <section className="flex-1 text-white flex flex-col justify-center space-y-6">
           <p className="uppercase tracking-[0.4em] text-sm text-blue-200">
-            Document Tracking System
+            DOST-Marinduque Document Tracking System
           </p>
           <h1 className="text-4xl lg:text-6xl font-bold leading-snug">
-            Manage, monitor, and move documents with confidence.
+            Track incoming and outgoing documents in one place.
           </h1>
           <p className="text-lg text-blue-100 max-w-2xl">
-            A centralized command center that keeps every letter, memo, and
-            request in motion. Stay ahead with live dashboards, instant alerts,
-            and detailed audit trails.
+            Log, search, and monitor document status from receipt to release.
+            Built for day-to-day routing, quick retrieval, and clear reporting.
           </p>
 
           <div className="flex flex-wrap gap-6">
             <div className="bg-white/10 border border-white/20 rounded-2xl p-4 w-48 backdrop-blur">
-              <p className="text-3xl font-semibold">1.2K+</p>
+              <p className="text-lg font-semibold">Incoming / Outgoing</p>
               <p className="text-sm uppercase tracking-wide text-blue-200">
-                Documents tracked
+                Fast logging & tracking
               </p>
             </div>
             <div className="bg-white/10 border border-white/20 rounded-2xl p-4 w-48 backdrop-blur">
-              <p className="text-3xl font-semibold">24/7</p>
+              <p className="text-lg font-semibold">Dashboard</p>
               <p className="text-sm uppercase tracking-wide text-blue-200">
-                Monitoring
+                Monthly / yearly overview
               </p>
             </div>
             <div className="bg-white/10 border border-white/20 rounded-2xl p-4 w-48 backdrop-blur">
-              <p className="text-3xl font-semibold">8</p>
+              <p className="text-lg font-semibold">Records</p>
               <p className="text-sm uppercase tracking-wide text-blue-200">
-                Active offices
+                Search, filter, export-ready
               </p>
             </div>
           </div>
@@ -93,8 +96,7 @@ const AdminLogin = () => {
                 Sign in to continue
               </h2>
               <p className="text-blue-100 mt-1">
-                Use your official admin credentials to access the control
-                center.
+                Use your admin credentials to access the DOST-Marinduque DTS.
               </p>
             </div>
 
@@ -127,9 +129,19 @@ const AdminLogin = () => {
               </div>
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-400 to-blue-600 text-white py-3 rounded-xl font-semibold shadow-lg shadow-blue-900/30 hover:scale-[1.01] transition-transform"
+                disabled={isLoading}
+                aria-busy={isLoading}
+                className="w-full bg-gradient-to-r from-blue-400 to-blue-600 text-white py-3 rounded-xl font-semibold shadow-lg shadow-blue-900/30 transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
               >
-                Login
+                <span className="inline-flex items-center justify-center gap-2">
+                  {isLoading && (
+                    <span
+                      className="h-4 w-4 animate-spin rounded-full border-2 border-white/70 border-t-white"
+                      aria-hidden="true"
+                    />
+                  )}
+                  {isLoading ? "Logging in..." : "Login"}
+                </span>
               </button>
 
               {error && (
