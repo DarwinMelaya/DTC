@@ -18,9 +18,25 @@ const ensureNetworkShare = async () => {
 const sanitizeFileName = (fileName = "") =>
   fileName.replace(/[<>:"/\\|?*\u0000-\u001F]/g, "_");
 
-async function uploadFile(fileBuffer, fileName) {
+const sanitizePathSegment = (segment = "") =>
+  segment
+    .replace(/[<>:"/\\|?*\u0000-\u001F]/g, "_")
+    .replace(/\.+/g, ".")
+    .trim();
+
+async function ensureNetworkSubdir(subdir) {
+  const baseDir = await ensureNetworkShare();
+  if (!subdir) return baseDir;
+
+  const safeSubdir = sanitizePathSegment(subdir);
+  const resolved = path.join(baseDir, safeSubdir);
+  await fs.promises.mkdir(resolved, { recursive: true });
+  return resolved;
+}
+
+async function uploadFile(fileBuffer, fileName, options = {}) {
   try {
-    const baseDir = await ensureNetworkShare();
+    const baseDir = await ensureNetworkSubdir(options?.subdir);
     const safeName = sanitizeFileName(fileName);
     const stampedName = `${Date.now()}-${safeName}`;
     const targetPath = path.join(baseDir, stampedName);
@@ -32,4 +48,9 @@ async function uploadFile(fileBuffer, fileName) {
   }
 }
 
-module.exports = { uploadFile, ensureNetworkShare, NETWORK_SHARE_PATH };
+module.exports = {
+  uploadFile,
+  ensureNetworkShare,
+  ensureNetworkSubdir,
+  NETWORK_SHARE_PATH,
+};

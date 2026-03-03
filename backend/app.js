@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs");
 const Admin = require("./models/adminModel");
 const adminRouter = require("./routes/adminRoutes");
 const documentRouter = require("./routes/documentsRoutes");
+const incomingRoRouter = require("./routes/incomingRoRoutes");
 const agencyRouter = require("./routes/agencyRoutes");
 const receiverRouter = require("./routes/receiverNameRoutes");
 const { ensureNetworkShare, NETWORK_SHARE_PATH } = require("./controllers/googleDrive");
@@ -47,6 +48,7 @@ mongoose
 
 app.use("/api/admin", adminRouter);
 app.use("/api/document", documentRouter);
+app.use("/api/incoming-ro", incomingRoRouter);
 app.use("/api/agency", agencyRouter);
 app.use("/api/receiver", receiverRouter);
 
