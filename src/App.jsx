@@ -9,7 +9,7 @@ import AddReceiver from "./pages/admin/settings/addReceiver";
 import AddDocuments from "./pages/admin/addDocuments";
 import { useAuth } from "./context/AuthContext";
 import PropTypes from "prop-types";
-
+import IncomingRo from "./pages/IncomingRo";
 const ProtectedRoute = ({ children }) => {
   const { isAdmin } = useAuth();
 
@@ -24,9 +24,8 @@ function App() {
   return (
     <div>
       <Routes>
-
         <Route path="/" element={<Admin />} />
-        <Route path="/login" element={<h1>Login Page</h1>} /> 
+        <Route path="/login" element={<h1>Login Page</h1>} />
 
         <Route
           path="/admin/dashboard"
@@ -81,6 +80,14 @@ function App() {
           element={
             <ProtectedRoute>
               <AddDocuments />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/incoming-ro"
+          element={
+            <ProtectedRoute>
+              <IncomingRo />
             </ProtectedRoute>
           }
         />

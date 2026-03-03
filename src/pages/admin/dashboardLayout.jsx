@@ -4,15 +4,17 @@ import Sidebar from "../../components/sidebar";
 
 const DashboardLayout = ({ children }) => {
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    <div className="flex h-screen flex-col overflow-hidden bg-slate-950 text-slate-100">
       <Navbar />
 
       <div className="flex flex-1 overflow-hidden">
-        <aside className="w-64 bg-blue-800 text-white p-6">
+        <div className="w-72 shrink-0 border-r border-slate-800 bg-slate-950/70 px-3 py-4">
           <Sidebar />
-        </aside>
+        </div>
 
-        <main className="flex-1 overflow-hidden">{children}</main>
+        <main className="flex-1 overflow-auto bg-slate-900/40 p-6">
+          {children}
+        </main>
       </div>
     </div>
   );

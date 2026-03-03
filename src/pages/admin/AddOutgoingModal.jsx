@@ -259,14 +259,14 @@ const AddOutgoingModal = ({ isOpen, onClose, onDocumentAdded }) => {
       style={{ backdropFilter: "blur(8px)" }}
     >
       <Notification message={notification?.message} type={notification?.type} />
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto relative p-6">
+      <div className="bg-white text-slate-900 rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto relative p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold text-gray-800">
+          <h2 className="text-2xl font-bold text-slate-900">
             Add Outgoing Document
           </h2>
           <button
             onClick={handleClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+            className="text-slate-500 hover:text-slate-800 transition-colors"
           >
             <X size={24} />
           </button>
@@ -276,7 +276,7 @@ const AddOutgoingModal = ({ isOpen, onClose, onDocumentAdded }) => {
           <div className="flex flex-row space-x-4">
             <div className="space-y-4 w-full">
               <div>
-                <label className="text-gray-700 font-medium block mb-1">
+                <label className="text-slate-700 font-medium block mb-1">
                   Agency
                 </label>
                 <div className="relative w-full" ref={agencyDropdownRef}>
@@ -286,11 +286,11 @@ const AddOutgoingModal = ({ isOpen, onClose, onDocumentAdded }) => {
                     onClick={() => setIsAgencyDropdownVisible(true)}
                     onChange={handleChange}
                     type="text"
-                    className="block rounded-md px-2 py-2 border border-gray-300 bg-white w-full"
+                    className="block rounded-md px-2 py-2 border border-slate-300 bg-white text-slate-900 placeholder-slate-500 w-full focus:outline-none focus:ring-2 focus:ring-slate-400"
                     placeholder="Enter agency name"
                   />
                   {isAgencyDropdownVisible && agencies.length > 0 && (
-                    <ul className="absolute bg-white border border-gray-300 mt-2 max-h-40 overflow-y-auto w-full z-10 shadow-lg">
+                    <ul className="absolute bg-white text-slate-900 border border-slate-300 mt-2 max-h-40 overflow-y-auto w-full z-10 shadow-lg rounded-md">
                       {agencies.map((agency) => (
                         <li
                           key={agency._id}
@@ -301,7 +301,7 @@ const AddOutgoingModal = ({ isOpen, onClose, onDocumentAdded }) => {
                             });
                             setIsAgencyDropdownVisible(false);
                           }}
-                          className="p-2 cursor-pointer hover:bg-gray-200"
+                          className="p-2 cursor-pointer hover:bg-slate-100 text-slate-900"
                         >
                           {agency.agencyName}
                         </li>
@@ -312,7 +312,7 @@ const AddOutgoingModal = ({ isOpen, onClose, onDocumentAdded }) => {
               </div>
 
               <div>
-                <label className="text-gray-700 font-medium block mb-1">
+                <label className="text-slate-700 font-medium block mb-1">
                   Sender Name
                 </label>
                 <div className="relative w-full">
@@ -323,13 +323,13 @@ const AddOutgoingModal = ({ isOpen, onClose, onDocumentAdded }) => {
                     onClick={() => setIsDropdownVisible(true)}
                     onChange={handleChange}
                     type="text"
-                    className="block w-full rounded-md px-2 py-2 border border-gray-300 bg-white"
+                    className="block w-full rounded-md px-2 py-2 border border-slate-300 bg-white text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400"
                     placeholder="Type sender name"
                   />
                   {isDropdownVisible && filteredReceivers.length > 0 && (
                     <ul
                       ref={dropdownRef}
-                      className="absolute bg-white border border-gray-300 mt-2 max-h-40 overflow-y-auto w-full z-10 shadow-lg"
+                      className="absolute bg-white text-slate-900 border border-slate-300 mt-2 max-h-40 overflow-y-auto w-full z-10 shadow-lg rounded-md"
                     >
                       {filteredReceivers.map((receiver) => (
                         <li
@@ -341,7 +341,7 @@ const AddOutgoingModal = ({ isOpen, onClose, onDocumentAdded }) => {
                             });
                             setIsDropdownVisible(false);
                           }}
-                          className="p-2 cursor-pointer hover:bg-gray-200"
+                          className="p-2 cursor-pointer hover:bg-slate-100 text-slate-900"
                         >
                           {receiver.receiver}
                         </li>
@@ -352,7 +352,7 @@ const AddOutgoingModal = ({ isOpen, onClose, onDocumentAdded }) => {
               </div>
 
               <div>
-                <label className="text-gray-700 font-medium block mb-1">
+                <label className="text-slate-700 font-medium block mb-1">
                   Purpose of Letter
                 </label>
                 <input
@@ -361,14 +361,14 @@ const AddOutgoingModal = ({ isOpen, onClose, onDocumentAdded }) => {
                   placeholder="Describe the purpose of this request"
                   value={formData.purposeOfLetter}
                   onChange={handleChange}
-                  className="block w-full rounded-md px-2 py-2 border border-gray-300 bg-white"
+                  className="block w-full rounded-md px-2 py-2 border border-slate-300 bg-white text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400"
                 />
               </div>
             </div>
 
             <div className="space-y-4 w-full">
               <div>
-                <label className="text-gray-700 font-medium block mb-1">
+                <label className="text-slate-700 font-medium block mb-1">
                   Date
                 </label>
                 <input
@@ -376,12 +376,12 @@ const AddOutgoingModal = ({ isOpen, onClose, onDocumentAdded }) => {
                   type="date"
                   value={formData.date}
                   onChange={handleChange}
-                  className="block w-full rounded-md px-2 py-2 border border-gray-300 bg-white"
+                  className="block w-full rounded-md px-2 py-2 border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400"
                 />
               </div>
 
               <div>
-                <label className="text-gray-700 font-medium block mb-1">
+                <label className="text-slate-700 font-medium block mb-1">
                   Code
                 </label>
                 <input
@@ -390,19 +390,19 @@ const AddOutgoingModal = ({ isOpen, onClose, onDocumentAdded }) => {
                   placeholder="Enter code for the document"
                   value={formData.code}
                   onChange={handleChange}
-                  className="block w-full rounded-md px-2 py-2 border border-gray-300 bg-white"
+                  className="block w-full rounded-md px-2 py-2 border border-slate-300 bg-white text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400"
                 />
               </div>
 
               <div>
-                <label className="text-gray-700 font-medium block mb-1">
+                <label className="text-slate-700 font-medium block mb-1">
                   Delivery Method
                 </label>
                 <select
                   name="deliveryMethod"
                   value={formData.deliveryMethod}
                   onChange={handleChange}
-                  className="block w-full rounded-md px-2 py-2 border border-gray-300 bg-white"
+                  className="block w-full rounded-md px-2 py-2 border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400"
                   required
                 >
                   <option value="">Select delivery method</option>
@@ -412,14 +412,14 @@ const AddOutgoingModal = ({ isOpen, onClose, onDocumentAdded }) => {
               </div>
 
               <div>
-                <label className="text-gray-700 font-medium block mb-1">
+                <label className="text-slate-700 font-medium block mb-1">
                   Upload Document
                 </label>
                 <input
                   ref={fileInputRef}
                   onChange={handleFileChange}
                   type="file"
-                  className="block w-full rounded-md px-2 py-2 border border-gray-300 bg-white"
+                  className="block w-full rounded-md px-2 py-2 border border-slate-300 bg-white text-slate-900 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:bg-slate-100 file:text-slate-700"
                 />
               </div>
             </div>
@@ -429,13 +429,13 @@ const AddOutgoingModal = ({ isOpen, onClose, onDocumentAdded }) => {
             <button
               type="button"
               onClick={handleClose}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200"
+              className="px-4 py-2 bg-slate-200 text-slate-800 rounded-md hover:bg-slate-300 transition duration-200"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition duration-200"
+              className="px-4 py-2 bg-amber-500 text-white rounded-md hover:bg-amber-600 transition duration-200"
             >
               Submit
             </button>

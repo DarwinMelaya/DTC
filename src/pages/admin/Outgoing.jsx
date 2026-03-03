@@ -281,7 +281,7 @@ const Outgoing = () => {
     <Layout>
       <div className="flex flex-col px-6 py-2">
         <div>
-          <h1 className="text-2xl font-semibold">Outgoing Documents</h1>
+          <h1 className="text-2xl font-semibold text-slate-100">Outgoing Documents</h1>
         </div>
 
         <div className="flex flex-row items-center justify-between py-2">
@@ -326,7 +326,7 @@ const Outgoing = () => {
               placeholder="Filter by agency..."
               value={filterText}
               onChange={(e) => setFilterText(e.target.value)}
-              className="p-2 border border-gray-200 rounded"
+              className="p-2 border border-slate-600 rounded bg-slate-800 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-500"
             />
           </div>
           <button
@@ -363,35 +363,35 @@ const Outgoing = () => {
                 setTimeout(() => setNotification(null), 3000);
               }}
             />
-            <table className="min-w-full border border-gray-200 bg-white shadow-md rounded-lg">
-              <thead className="bg-blue-500 text-white">
+            <table className="min-w-full border border-slate-600 bg-slate-800 shadow-md rounded-lg text-slate-100">
+              <thead className="bg-slate-700 text-slate-100">
                 <tr>
-                  <th className="px-1 py-1 border border-gray-200 w-50">
+                  <th className="px-1 py-1 border border-slate-600 w-50">
                     Agency
                   </th>
-                  <th className="px-1 py-1 border border-gray-200 w-40">
+                  <th className="px-1 py-1 border border-slate-600 w-40">
                     Sender Name
                   </th>
                   <th
-                    className="px-1 py-1 border border-gray-200"
+                    className="px-1 py-1 border border-slate-600"
                     style={{ width: "300px" }}
                   >
                     Purpose Of Letter
                   </th>
-                  <th className="px-1 py-1 border border-gray-200 w-30">
+                  <th className="px-1 py-1 border border-slate-600 w-30">
                     Code
                   </th>
 
-                  <th className="px-1 py-1 border border-gray-200 w-40">
+                  <th className="px-1 py-1 border border-slate-600 w-40">
                     Date
                   </th>
-                  <th className="px-1 py-1 border border-gray-200 w-40">
+                  <th className="px-1 py-1 border border-slate-600 w-40">
                     Delivery Method
                   </th>
-                  <th className="px-1 py-1 border border-gray-200 w-40">
+                  <th className="px-1 py-1 border border-slate-600 w-40">
                     Document
                   </th>
-                  <th className="px-1 py-1 border border-gray-200 w-40">
+                  <th className="px-1 py-1 border border-slate-600 w-40">
                     Actions
                   </th>
                 </tr>
@@ -400,35 +400,35 @@ const Outgoing = () => {
                 {currentDocs.map((doc) => (
                   <tr
                     key={doc._id}
-                    className="border-b border-gray-200 hover:bg-gray-100 text-center"
+                    className="border-b border-slate-600 hover:bg-slate-700/50 text-center text-slate-100"
                   >
                     <>
-                      <td className="px-4 py-1 border border-gray-200 text-sm">
+                      <td className="px-4 py-1 border border-slate-600 text-sm">
                         {doc.agency}
                       </td>
-                      <td className="px-4 py-1 border border-gray-200 text-sm">
+                      <td className="px-4 py-1 border border-slate-600 text-sm">
                         {doc.name}
                       </td>
-                      <td className="px-4 py-1 border border-gray-200 text-sm">
+                      <td className="px-4 py-1 border border-slate-600 text-sm">
                         {doc.purposeOfLetter}
                       </td>
-                      <td className="px-1 py-1 border border-gray-200 text-sm">
+                      <td className="px-1 py-1 border border-slate-600 text-sm">
                         {doc.code}
                       </td>
-                      <td className="px-4 py-1 border border-gray-200">
+                      <td className="px-4 py-1 border border-slate-600">
                         {new Date(doc.date).toLocaleDateString("en-US", {
                           month: "long",
                           day: "numeric",
                           year: "numeric",
                         })}
                       </td>
-                      <td className="px-1 py-1 border border-gray-200 text-sm">
+                      <td className="px-1 py-1 border border-slate-600 text-sm">
                         {doc.deliveryMethod || "-"}
                       </td>
-                      <td className="px-1 py-1 border border-gray-200 text-sm">
+                      <td className="px-1 py-1 border border-slate-600 text-sm">
                         {doc.fileName}
                       </td>
-                      <td className="px-4 py-1 border-gray-200 text-sm text-center">
+                      <td className="px-4 py-1 border-slate-600 text-sm text-center">
                         <div className="flex justify-center items-center space-x-2">
                           <button
                             onClick={() => handleEdit(doc)}
@@ -459,11 +459,11 @@ const Outgoing = () => {
               </tbody>
             </table>
             {pdfUrl && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 ">
-                <div className="bg-white p-5 rounded-lg shadow-lg w-3/4 h-full relative pt-16">
+              <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
+                <div className="bg-slate-900 text-slate-100 p-5 rounded-lg shadow-lg w-3/4 h-full relative pt-16">
                   <button
-                    onClick={() => handlePreview(doc.fileData)}
-                    className="absolute top-4 right-4 text-gray-700 hover:text-red-500"
+                    onClick={() => setPdfUrl(null)}
+                    className="absolute top-4 right-4 text-slate-300 hover:text-red-400"
                   >
                     <X size={30} />
                   </button>
@@ -478,27 +478,27 @@ const Outgoing = () => {
               </div>
             )}
 
-            <div className="bg-gray-500 ">
+            <div>
               {setOpen && (
-                <div className="fixed inset-0 flex items-center justify-center bg-gray-950/70 backdrop-blur-50 z-50">
-                  <div className="bg-white p-6 rounded-lg shadow-lg relative z-10 w-90">
-                    <p className="font-medium">
+                <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur z-50">
+                  <div className="bg-slate-800 text-slate-100 p-6 rounded-lg shadow-lg border border-slate-600 relative z-10 w-90">
+                    <p className="font-medium text-slate-100">
                       Are you sure you want to delete?
                     </p>
-                    <p>
+                    <p className="text-slate-300 mt-1">
                       This will permanently delete the item and remove it from
                       our servers.
                     </p>
-                    <div className="w-full flex justify-end items-end space-x-2">
+                    <div className="w-full flex justify-end items-end space-x-2 mt-4">
                       <button
                         onClick={() => deleteDocument(selectedDocId)}
-                        className="bg-red-500 text-white px-4 py-2 w-20 rounded mt-4"
+                        className="bg-red-500 text-white px-4 py-2 w-20 rounded hover:bg-red-600"
                       >
                         Yes
                       </button>
                       <button
                         onClick={() => setIsOpen(false)}
-                        className="bg-white text-black border border-gray-400 px-4 py-2 rounded mt-4"
+                        className="bg-slate-600 text-slate-100 border border-slate-500 px-4 py-2 rounded hover:bg-slate-500"
                       >
                         Cancel
                       </button>
@@ -509,26 +509,26 @@ const Outgoing = () => {
             </div>
           </>
         ) : (
-          <p className="text-center text-gray-500 mt-4">
+          <p className="text-center text-slate-400 mt-4">
             No documents available
           </p>
         )}
-        <div className="sticky top-0 z-10 w-full py-6 px-6 bg-white shadow-sm">
+        <div className="sticky top-0 z-10 w-full py-6 px-6 bg-slate-900/60 border-t border-slate-700 shadow-sm">
           <div className="flex justify-end items-center space-x-4">
             <button
               onClick={handlePrevPage}
               disabled={currentPage === 1}
-              className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
+              className="px-3 py-1 bg-slate-600 text-slate-100 rounded hover:bg-slate-500 disabled:opacity-50 disabled:hover:bg-slate-600"
             >
               Prev
             </button>
-            <span className="text-lg font-semibold text-gray-400">
+            <span className="text-lg font-semibold text-slate-300">
               Page {currentPage} of {totalPages}
             </span>
             <button
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
-              className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
+              className="px-3 py-1 bg-slate-600 text-slate-100 rounded hover:bg-slate-500 disabled:opacity-50 disabled:hover:bg-slate-600"
             >
               Next
             </button>
