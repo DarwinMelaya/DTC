@@ -1,15 +1,13 @@
-import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
 import {
-  HomeIcon,
-  FilePlus,
-  FileInput,
-  FileOutput,
-  Settings,
-  LogOut,
   ChevronDown,
   ChevronUp,
+  FileInput,
+  HomeIcon,
+  LogOut,
+  Settings,
 } from "lucide-react";
+import React, { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const linkBase =
   "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors";
@@ -31,7 +29,6 @@ const Sidebar = () => {
 
   const navItems = [
     { to: "/admin/dashboard", label: "Dashboard", icon: HomeIcon },
-    { to: "/admin/add", label: "Add Documents", icon: FilePlus },
     { to: "/admin/incoming-ro", label: "Incoming from RO", icon: FileInput },
   ];
 
@@ -88,7 +85,10 @@ const Sidebar = () => {
             } justify-between`}
           >
             <span className="flex items-center gap-3 text-left">
-              <FileInput size={18} className="text-slate-400 group-hover:text-slate-50" />
+              <FileInput
+                size={18}
+                className="text-slate-400 group-hover:text-slate-50"
+              />
               PSTO
             </span>
             {isPstoOpen ? (
@@ -137,7 +137,10 @@ const Sidebar = () => {
             } justify-between`}
           >
             <span className="flex items-center gap-3 text-left">
-              <Settings size={18} className="text-slate-400 group-hover:text-slate-50" />
+              <Settings
+                size={18}
+                className="text-slate-400 group-hover:text-slate-50"
+              />
               Settings
             </span>
             {isSettingsOpen ? (

@@ -1,12 +1,27 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
-import Layout from "./admin/layout";
 import { X } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import AddIncomingRoModal from "./AddIncomingRoModal";
+import Layout from "./admin/layout";
+import EditIncomingRoModal from "./EditIncomingRoModal";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
   `http://${window.location.hostname}:5000`;
+
+const Notification = ({ message, type }) => {
+  if (!message) return null;
+  return (
+    <div
+      className={`absolute top-20 right-5 transform -translate-x-1/2 p-3 rounded-md text-white shadow-lg ${
+        type === "success" ? "bg-green-500" : "bg-red-500"
+      }`}
+      style={{ zIndex: 1000 }}
+    >
+      {message}
+    </div>
+  );
+};
 
 const IncomingRo = () => {
   const api = `${API_BASE_URL}/api/incoming-ro/get-document`;
@@ -18,6 +33,11 @@ const IncomingRo = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pdfUrl, setPdfUrl] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [notification, setNotification] = useState(null);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [selectedDocId, setSelectedDocId] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editDoc, setEditDoc] = useState(null);
 
   const itemsPerPage = 15;
 
@@ -34,6 +54,30 @@ const IncomingRo = () => {
       setFilteredDocs(response.data || []);
     } catch (error) {
       console.error("Error fetching Incoming RO documents:", error);
+    }
+  };
+
+  const deleteIncomingRo = async (id) => {
+    if (!id) return;
+    try {
+      await axios.delete(
+        `${API_BASE_URL}/api/incoming-ro/delete-document/${id}`,
+      );
+      setDocs((prev) => prev.filter((doc) => doc._id !== id));
+      setFilteredDocs((prev) => prev.filter((doc) => doc._id !== id));
+      setIsConfirmOpen(false);
+      setNotification({
+        message: "Incoming RO document deleted successfully!",
+        type: "success",
+      });
+    } catch (error) {
+      console.error("Error deleting Incoming RO document:", error);
+      setNotification({
+        message: "Failed to delete document.",
+        type: "error",
+      });
+    } finally {
+      setTimeout(() => setNotification(null), 3000);
     }
   };
 
@@ -71,12 +115,24 @@ const IncomingRo = () => {
     ),
   ].sort((a, b) => a - b);
   const uniqueMonths = [
-    ...new Set(docs.map((doc) => new Date(doc.dateReceived).getMonth().toString())),
+    ...new Set(
+      docs.map((doc) => new Date(doc.dateReceived).getMonth().toString()),
+    ),
   ].sort((a, b) => a - b);
 
   const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December",
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -92,17 +148,27 @@ const IncomingRo = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
+  const openEdit = (doc) => {
+    setEditDoc(doc);
+    setIsEditModalOpen(true);
+  };
+
   return (
     <Layout>
-      <div className="flex flex-col px-6 py-2">
-        <div>
+      <div className="flex flex-col px-6 py-2 relative">
+        <Notification
+          message={notification?.message}
+          type={notification?.type}
+        />
+
+        <div className="flex items-center justify-between mb-2">
           <h1 className="text-2xl font-semibold text-slate-100">
             Incoming from RO
           </h1>
         </div>
 
         <div className="flex flex-row items-center justify-between py-2">
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-wrap items-center gap-3">
             <button
               type="button"
               onClick={() => setIsAddModalOpen(true)}
@@ -164,7 +230,7 @@ const IncomingRo = () => {
                   <th className="px-4 py-2 border border-slate-600 w-40">
                     Documents
                   </th>
-                  <th className="px-4 py-2 border border-slate-600 w-32 text-center">
+                  <th className="px-4 py-2 border border-slate-600 w-48 text-center">
                     Actions
                   </th>
                 </tr>
@@ -192,12 +258,29 @@ const IncomingRo = () => {
                       {doc.documentName || "—"}
                     </td>
                     <td className="px-4 py-2 border border-slate-600 text-center">
-                      <button
-                        onClick={() => handlePreview(doc._id)}
-                        className="bg-green-600 text-white px-3 py-1.5 rounded text-sm hover:bg-green-500 transition duration-200"
-                      >
-                        Preview
-                      </button>
+                      <div className="flex justify-center items-center space-x-2">
+                        <button
+                          onClick={() => handlePreview(doc._id)}
+                          className="bg-green-600 text-white px-3 py-1.5 rounded text-xs hover:bg-green-500 transition duration-200"
+                        >
+                          Preview
+                        </button>
+                        <button
+                          onClick={() => openEdit(doc)}
+                          className="bg-blue-600 text-white px-3 py-1.5 rounded text-xs hover:bg-blue-500 transition duration-200"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedDocId(doc._id);
+                            setIsConfirmOpen(true);
+                          }}
+                          className="bg-red-600 text-white px-3 py-1.5 rounded text-xs hover:bg-red-500 transition duration-200"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -222,6 +305,52 @@ const IncomingRo = () => {
               </div>
             )}
 
+            {isConfirmOpen && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur z-50">
+                <div className="bg-slate-800 text-slate-100 p-6 rounded-lg shadow-lg border border-slate-600 w-full max-w-md">
+                  <p className="font-medium text-slate-100">
+                    Are you sure you want to delete this document?
+                  </p>
+                  <p className="text-slate-300 mt-1 text-sm">
+                    This action cannot be undone.
+                  </p>
+                  <div className="mt-4 flex justify-end space-x-3">
+                    <button
+                      onClick={() => deleteIncomingRo(selectedDocId)}
+                      className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-500"
+                    >
+                      Yes, delete
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsConfirmOpen(false);
+                        setSelectedDocId(null);
+                      }}
+                      className="bg-slate-600 text-slate-100 border border-slate-500 px-4 py-2 rounded hover:bg-slate-500"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <EditIncomingRoModal
+              isOpen={isEditModalOpen}
+              onClose={() => {
+                setIsEditModalOpen(false);
+                setEditDoc(null);
+              }}
+              document={editDoc}
+              onUpdated={(updated) => {
+                setDocs((prev) =>
+                  prev.map((d) => (d._id === updated._id ? updated : d)),
+                );
+                setFilteredDocs((prev) =>
+                  prev.map((d) => (d._id === updated._id ? updated : d)),
+                );
+              }}
+            />
             <div className="sticky top-0 z-10 w-full py-6 px-6 bg-slate-900/60 border-t border-slate-700 shadow-sm">
               <div className="flex justify-end items-center space-x-4">
                 <button

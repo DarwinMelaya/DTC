@@ -72,6 +72,60 @@ const addIncomingRo = async (req, res) => {
 };
 
 /**
+ * Update Incoming RO document
+ */
+const updateIncomingRo = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: "Document ID is required" });
+    }
+
+    const { receiverName, particulars, dateReceived } = req.body;
+
+    if (!receiverName || !particulars || !dateReceived) {
+      return res.status(400).json({
+        message: "Receiver Name, Particulars, and Date Received are required.",
+      });
+    }
+
+    const document = await IncomingRo.findById(id);
+    if (!document) {
+      return res.status(404).json({ message: "Document not found" });
+    }
+
+    document.receiverName = receiverName;
+    document.particulars = particulars;
+    document.dateReceived = dateReceived;
+
+    if (req.file) {
+      const uploadResult = await uploadFile(
+        req.file.buffer,
+        req.file.originalname,
+        { subdir: process.env.INCOMING_RO_SUBDIR || "Incoming RO" },
+      );
+      if (!uploadResult) {
+        return res
+          .status(500)
+          .json({ message: "File upload to network share failed!" });
+      }
+      document.documentName = req.file.originalname;
+      document.documentPath = uploadResult.fileUrl;
+    }
+
+    await document.save();
+
+    return res.status(200).json({
+      message: "Incoming RO document updated successfully",
+      document,
+    });
+  } catch (error) {
+    console.error("Update Incoming RO Error:", error);
+    return res.status(500).json({ message: "Internal Server Error", error });
+  }
+};
+
+/**
  * Delete Incoming RO document
  */
 const deleteIncomingRo = async (req, res) => {
@@ -129,6 +183,7 @@ const downloadIncomingRo = async (req, res) => {
 module.exports = {
   getIncomingRo,
   addIncomingRo,
+  updateIncomingRo,
   deleteIncomingRo,
   downloadIncomingRo,
   upload,
