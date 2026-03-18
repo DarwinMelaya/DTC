@@ -30,7 +30,7 @@ const documentSchema = new mongoose.Schema({
     required: false,
   },
   fileData: {
-    type: String, // Absolute path to the file on the network share
+  type: String, // GridFS file ID as string
     required: false,
   },
   deliveryMethod: {

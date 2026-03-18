@@ -1,8 +1,11 @@
 const IncomingRo = require("../models/incomingRoModel");
 const path = require("path");
-const fs = require("fs");
+const { Types } = require("mongoose");
 const multer = require("multer");
-const { uploadFile } = require("./googleDrive");
+const {
+  uploadBufferToGridFS,
+  openDownloadStreamFromGridFS,
+} = require("../utils/gridfs");
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage }).single("document");
@@ -37,18 +40,20 @@ const addIncomingRo = async (req, res) => {
     let documentName = null;
 
     if (req.file) {
-      const uploadResult = await uploadFile(
-        req.file.buffer,
-        req.file.originalname,
-        { subdir: process.env.INCOMING_RO_SUBDIR || "Incoming RO" },
-      );
-      if (!uploadResult) {
+      try {
+        const uploadResult = await uploadBufferToGridFS(
+          req.file.buffer,
+          req.file.originalname,
+          req.file.mimetype,
+        );
+        documentName = req.file.originalname;
+        documentPath = uploadResult.fileId.toString();
+      } catch (error) {
+        console.error("GridFS upload error (Incoming RO):", error);
         return res
           .status(500)
-          .json({ message: "File upload to network share failed!" });
+          .json({ message: "File upload to MongoDB failed!" });
       }
-      documentName = req.file.originalname;
-      documentPath = uploadResult.fileUrl;
     }
 
     const doc = new IncomingRo({
@@ -99,18 +104,20 @@ const updateIncomingRo = async (req, res) => {
     document.dateReceived = dateReceived;
 
     if (req.file) {
-      const uploadResult = await uploadFile(
-        req.file.buffer,
-        req.file.originalname,
-        { subdir: process.env.INCOMING_RO_SUBDIR || "Incoming RO" },
-      );
-      if (!uploadResult) {
+      try {
+        const uploadResult = await uploadBufferToGridFS(
+          req.file.buffer,
+          req.file.originalname,
+          req.file.mimetype,
+        );
+        document.documentName = req.file.originalname;
+        document.documentPath = uploadResult.fileId.toString();
+      } catch (error) {
+        console.error("GridFS upload error (Incoming RO update):", error);
         return res
           .status(500)
-          .json({ message: "File upload to network share failed!" });
+          .json({ message: "File upload to MongoDB failed!" });
       }
-      document.documentName = req.file.originalname;
-      document.documentPath = uploadResult.fileUrl;
     }
 
     await document.save();
@@ -162,15 +169,34 @@ const downloadIncomingRo = async (req, res) => {
       return res.status(404).json({ message: "Document or file not found" });
     }
 
-    const filePath = path.resolve(document.documentPath);
-    if (!fs.existsSync(filePath)) {
-      return res
-        .status(404)
-        .json({ message: "Stored file could not be located" });
+    let fileId;
+    try {
+      fileId = new Types.ObjectId(document.documentPath);
+    } catch (e) {
+      return res.status(400).json({ message: "Invalid stored file reference" });
     }
 
-    const downloadName = document.documentName || path.basename(filePath);
-    return res.download(filePath, downloadName);
+    const downloadName = document.documentName || "document.pdf";
+    res.setHeader(
+      "Content-Type",
+      "application/pdf",
+    );
+    res.setHeader(
+      "Content-Disposition",
+      `inline; filename="${encodeURIComponent(downloadName)}"`,
+    );
+
+    const downloadStream = openDownloadStreamFromGridFS(fileId);
+    downloadStream.on("error", (err) => {
+      console.error("GridFS download error (Incoming RO):", err);
+      if (!res.headersSent) {
+        res.status(500).json({
+          message: "Unable to download document",
+          error: err.message,
+        });
+      }
+    });
+    downloadStream.pipe(res);
   } catch (error) {
     console.error("Download Incoming RO Error:", error);
     return res.status(500).json({

@@ -1,8 +1,11 @@
 const Document = require("../models/documentModels");
 const multer = require("multer");
 const path = require("path");
-const fs = require("fs");
-const { uploadFile } = require("./googleDrive");
+const { Types } = require("mongoose");
+const {
+  uploadBufferToGridFS,
+  openDownloadStreamFromGridFS,
+} = require("../utils/gridfs");
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -29,25 +32,27 @@ const addDocument = async (req, res) => {
       });
     }
 
-    let fileUrl = null;
+    let fileId = null;
     let fileName = null;
 
     if (req.file) {
-      const uploadResult = await uploadFile(
-        req.file.buffer,
-        req.file.originalname,
-      );
-      if (!uploadResult) {
+      try {
+        const uploadResult = await uploadBufferToGridFS(
+          req.file.buffer,
+          req.file.originalname,
+          req.file.mimetype,
+        );
+        fileName = req.file.originalname;
+        fileId = uploadResult.fileId.toString();
+      } catch (error) {
+        console.error("GridFS upload error:", error);
         return res
           .status(500)
-          .json({ message: "File upload to network share failed!" });
+          .json({ message: "File upload to MongoDB failed!" });
       }
-
-      fileName = req.file.originalname;
-      fileUrl = uploadResult.fileUrl;
     }
 
-    // Save document with the Google Drive file URL
+    // Save document with the GridFS file ID
     const document = new Document({
       agency,
       purposeOfLetter,
@@ -56,7 +61,7 @@ const addDocument = async (req, res) => {
       code,
       type,
       fileName,
-      fileData: fileUrl, // Absolute path on the network share
+      fileData: fileId, // GridFS file ID as string
       deliveryMethod,
     });
 
@@ -138,15 +143,18 @@ const updateDocument = async (req, res) => {
     document.deliveryMethod = deliveryMethod;
 
     if (req.file) {
-      const uploadResult = await uploadFile(
-        req.file.buffer,
-        req.file.originalname,
-      );
-      if (!uploadResult) {
+      try {
+        const uploadResult = await uploadBufferToGridFS(
+          req.file.buffer,
+          req.file.originalname,
+          req.file.mimetype,
+        );
+        document.fileName = req.file.originalname || document.fileName;
+        document.fileData = uploadResult.fileId.toString();
+      } catch (error) {
+        console.error("GridFS upload error:", error);
         return res.status(500).json({ message: "File upload failed!" });
       }
-      document.fileName = req.file.originalname || document.fileName;
-      document.fileData = uploadResult.fileUrl;
     }
 
     await document.save();
@@ -173,15 +181,33 @@ const downloadDocument = async (req, res) => {
       return res.status(404).json({ message: "Document or file not found" });
     }
 
-    const filePath = path.resolve(document.fileData);
-    if (!fs.existsSync(filePath)) {
-      return res
-        .status(404)
-        .json({ message: "Stored file could not be located" });
+    let fileId;
+    try {
+      fileId = new Types.ObjectId(document.fileData);
+    } catch (e) {
+      return res.status(400).json({ message: "Invalid stored file reference" });
     }
 
-    const downloadName = document.fileName || path.basename(filePath);
-    return res.download(filePath, downloadName);
+    const downloadName = document.fileName || "document.pdf";
+    res.setHeader(
+      "Content-Type",
+      "application/pdf",
+    );
+    res.setHeader(
+      "Content-Disposition",
+      `inline; filename="${encodeURIComponent(downloadName)}"`,
+    );
+
+    const downloadStream = openDownloadStreamFromGridFS(fileId);
+    downloadStream.on("error", (err) => {
+      console.error("GridFS download error:", err);
+      if (!res.headersSent) {
+        res
+          .status(500)
+          .json({ message: "Unable to download document", error: err.message });
+      }
+    });
+    downloadStream.pipe(res);
   } catch (error) {
     console.error("Download Document Error:", error);
     return res.status(500).json({

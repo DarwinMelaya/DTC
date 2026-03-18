@@ -9,7 +9,7 @@ const documentRouter = require("./routes/documentsRoutes");
 const incomingRoRouter = require("./routes/incomingRoRoutes");
 const agencyRouter = require("./routes/agencyRoutes");
 const receiverRouter = require("./routes/receiverNameRoutes");
-const { ensureNetworkShare, NETWORK_SHARE_PATH } = require("./controllers/googleDrive");
+const { initGridFS } = require("./utils/gridfs");
 dotenv.config();
 const app = express();
 const HOST = process.env.HOST || "0.0.0.0";
@@ -36,12 +36,17 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 mongoose
-  .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/DocumentTrackingSystem", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(
+    process.env.MONGODB_URI ||
+      "mongodb://localhost:27017/DocumentTrackingSystem",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    },
+  )
   .then(async () => {
-    console.log("Connected to MongoDB locally");
+    console.log("Connected to MongoDB");
+    initGridFS();
     await ensureDefaultAdmin();
   })
   .catch((err) => console.error("MongoDB connection error:", err));
@@ -51,12 +56,6 @@ app.use("/api/document", documentRouter);
 app.use("/api/incoming-ro", incomingRoRouter);
 app.use("/api/agency", agencyRouter);
 app.use("/api/receiver", receiverRouter);
-
-ensureNetworkShare()
-  .then(() => console.log(`Network share available at ${NETWORK_SHARE_PATH}`))
-  .catch((error) =>
-    console.error("Failed to initialize network share:", error.message)
-  );
 
 app.listen(PORT, HOST, () => {
   console.log(`Server running on ${HOST}:${PORT}`);

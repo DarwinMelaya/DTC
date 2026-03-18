@@ -1,9 +1,12 @@
 const path = require("path");
 const fs = require("fs");
 
+// Base directory where uploaded files (e.g. PDFs) are stored on the backend.
+// By default this is `<project-root>/backend/uploads`, but you can override it
+// via the NETWORK_SHARE_PATH environment variable if needed.
 const NETWORK_SHARE_PATH =
   process.env.NETWORK_SHARE_PATH ||
-  "\\\\PSTOMarSynology\\PSTO Marinduque FILES\\Document Tracking Storage";
+  path.join(__dirname, "..", "uploads");
 
 const ensureNetworkShare = async () => {
   try {

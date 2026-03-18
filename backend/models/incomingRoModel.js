@@ -18,7 +18,7 @@ const incomingRoSchema = new mongoose.Schema({
     required: false,
   },
   documentPath: {
-    type: String, // Path to file on network share
+  type: String, // GridFS file ID as string
     required: false,
   },
 });
