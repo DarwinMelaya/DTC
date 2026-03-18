@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import AdminBG from "../../assets/bg4.jpg";
+import logo from "../../assets/Logo.png";
 import "../../App.css";
 
 const API_BASE_URL =
@@ -53,9 +54,23 @@ const AdminLogin = () => {
 
       <div className="relative z-10 flex flex-col lg:flex-row min-h-screen p-6 lg:p-12 gap-12">
         <section className="flex-1 text-white flex flex-col justify-center space-y-6">
-          <p className="uppercase tracking-[0.4em] text-sm text-blue-200">
-            DOST-Marinduque Document Tracking System
-          </p>
+          <div className="flex items-center gap-4">
+            <img
+              src={logo}
+              alt="DOST Logo"
+              width={64}
+              height={64}
+              className="h-16 w-16 rounded-full bg-white/90 p-1"
+            />
+            <div>
+              <p className="uppercase tracking-[0.4em] text-sm text-blue-200">
+                DOST-Marinduque Document Tracking System
+              </p>
+              <p className="text-sm text-blue-100/90">
+                Department of Science and Technology
+              </p>
+            </div>
+          </div>
           <h1 className="text-4xl lg:text-6xl font-bold leading-snug">
             Track incoming and outgoing documents in one place.
           </h1>
@@ -89,9 +104,6 @@ const AdminLogin = () => {
         <section className="w-full max-w-md ml-auto bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl">
           <div className="p-8 space-y-8">
             <div>
-              <p className="text-sm uppercase tracking-[0.6em] text-blue-200">
-                Admin Access
-              </p>
               <h2 className="text-3xl font-semibold text-white mt-2">
                 Sign in to continue
               </h2>
